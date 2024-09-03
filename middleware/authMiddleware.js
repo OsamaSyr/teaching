@@ -4,22 +4,28 @@ const User = require("../models/User");
 exports.protect = async (req, res, next) => {
   let token = req.cookies.token;
 
+  console.log("Received token:", token); // Add this line for debugging
+
   if (!token) {
+    console.log("No token found in cookies"); // Add this line for debugging
     return res.status(401).json({ message: "Not authorized, no token" });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("Decoded token:", decoded); // Add this line for debugging
+
     const user = await User.findById(decoded.id).select("-password");
 
     if (!user) {
+      console.log("User not found for token"); // Add this line for debugging
       return res
         .status(401)
         .json({ message: "Not authorized, user not found" });
     }
 
     if (!user.activeSession || user.activeSession.token !== token) {
-      // Clear the invalid token from cookies
+      console.log("Invalid or expired session"); // Add this line for debugging
       res.clearCookie("token");
       return res
         .status(401)
