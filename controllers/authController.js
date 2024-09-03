@@ -49,7 +49,12 @@ exports.login = async (req, res) => {
     };
     await user.save();
 
-    res.cookie("token", token, { httpOnly: true });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Only use HTTPS in production
+      sameSite: "Lax", // This might help with cross-site cookie issues
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    });
 
     if (user.role === "admin") {
       res.status(200).json({ success: true, redirectTo: "/admin.html" });
