@@ -4,37 +4,33 @@ const User = require("../models/User");
 exports.protect = async (req, res, next) => {
   let token = req.cookies.token;
 
-  console.log("Received token:", token); // Add this line for debugging
+  console.log("Received token:", token);
 
   if (!token) {
-    console.log("No token found in cookies"); // Add this line for debugging
+    console.log("No token found in cookies");
     return res.status(401).json({ message: "Not authorized, no token" });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded token:", decoded); // Add this line for debugging
+    console.log("Decoded token:", decoded);
 
     const user = await User.findById(decoded.id).select("-password");
 
     if (!user) {
-      console.log("User not found for token"); // Add this line for debugging
+      console.log("User not found for token");
       return res
         .status(401)
         .json({ message: "Not authorized, user not found" });
     }
 
     if (!user.activeSession || user.activeSession.token !== token) {
-      console.log("Invalid or expired session"); // Add this line for debugging
+      console.log("Invalid or expired session");
       res.clearCookie("token");
       return res
         .status(401)
-        .json({ message: "انتهت صلاحية الجلسة، قم بتسجيل الدخول مرة أخرى" });
+        .json({ message: "Session expired, please log in again" });
     }
-
-    // Update last activity
-    user.activeSession.lastActivity = new Date();
-    await user.save();
 
     req.user = user;
     next();
