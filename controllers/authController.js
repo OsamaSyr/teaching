@@ -64,7 +64,6 @@ exports.login = async (req, res) => {
 
 exports.logout = async (req, res) => {
   try {
-    // Check if req.user exists before trying to access it
     if (req.user && req.user._id) {
       const user = await User.findById(req.user._id);
       if (user) {
@@ -73,10 +72,14 @@ exports.logout = async (req, res) => {
       }
     }
 
-    res
-      .cookie("token", "", { httpOnly: true, expires: new Date(0) })
-      .status(200)
-      .json({ success: true });
+    res.cookie("token", "", {
+      httpOnly: true,
+      expires: new Date(0),
+      secure: process.env.NODE_ENV === "production", // Set secure flag in production
+      sameSite: "strict", // Enhance cookie security
+    });
+
+    res.status(200).json({ success: true });
   } catch (err) {
     console.error("Logout Error:", err);
     res.status(500).json({ message: "Server error during logout" });

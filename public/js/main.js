@@ -111,11 +111,15 @@ if (window.location.pathname === "/student.html") {
     $.ajax({
       url: "/api/auth/logout",
       method: "POST",
+      xhrFields: {
+        withCredentials: true,
+      },
       success: function () {
         window.location.href = "index.html";
       },
-      error: function () {
-        alert("Failed to logout");
+      error: function (xhr, status, error) {
+        console.error("Logout failed:", error);
+        alert("Failed to logout. Please try again.");
       },
     });
   });
