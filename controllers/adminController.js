@@ -55,7 +55,8 @@ exports.getUserDevices = async (req, res) => {
 };
 
 exports.deleteUserDevice = async (req, res) => {
-  const { id, device } = req.params; // `id` is the user ID and `device` is the device fingerprint
+  const { id, device } = req.params;
+  const decodedDevice = decodeURIComponent(device);
 
   try {
     const user = await User.findById(id);
@@ -63,7 +64,7 @@ exports.deleteUserDevice = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    user.devices = user.devices.filter((d) => d !== decodeURIComponent(device));
+    user.devices = user.devices.filter((d) => d.fingerprint !== decodedDevice);
 
     await user.save();
 
@@ -180,12 +181,10 @@ exports.addPlaylist = async (req, res) => {
   try {
     // Input validation
     if (!title || !Array.isArray(videos) || videos.length === 0) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Title and videos are required, and videos must be a non-empty array",
-        });
+      return res.status(400).json({
+        message:
+          "Title and videos are required, and videos must be a non-empty array",
+      });
     }
 
     // Create new playlist
