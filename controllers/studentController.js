@@ -45,7 +45,7 @@ exports.getPlaylists = async (req, res) => {
 
     // Fetch the student with their playlists populated
     const student = await User.findById(studentId).populate("playlists");
-
+    console.log("Student ID:", studentId);
     if (!student || student.playlists.length === 0) {
       return res.status(404).json({ message: "لايوجد قوائم لهذا المستخدم" });
     }
