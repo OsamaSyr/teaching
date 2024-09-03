@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Tutor Platform</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Admin Dashboard</h2>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h4>Manage Users</h4>
+                <button class="btn btn-success mb-3" id="addUserBtn">Add User</button>
+                <ul id="userList" class="list-group">
+                    <!-- Users will be loaded here dynamically -->
+                </ul>
+            </div>
+
+            <div class="col-md-6">
+                <h4>Manage Playlists</h4>
+                <button class="btn btn-success mb-3" id="addPlaylistBtn">Add Playlist</button>
+                <ul id="playlistList" class="list-group">
+                    <!-- Playlists will be loaded here dynamically -->
+                </ul>
+            </div>
+        </div>
+
+        <button id="logoutBtn" class="btn btn-danger mt-4">Logout</button>
+    </div>
+
+<!-- Modal for Managing User Devices -->
+<div class="modal fade" id="manageDevicesModal" tabindex="-1" role="dialog" aria-labelledby="manageDevicesModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="manageDevicesModalLabel">Manage Devices</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul id="devicesList" class="list-group">
+                    <!-- Devices will be loaded here dynamically -->
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Modal for Adding Users -->
+    <div class="modal" id="addUserModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addUserForm">
+                        <div class="form-group">
+                            <label for="newUserId">User ID</label>
+                            <input type="text" id="newUserId" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newUserRole">Role</label>
+                            <select id="newUserRole" class="form-control" required>
+                                <option value="student">Student</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="newMaxComputers">Max Computers</label>
+                            <input type="number" id="newMaxComputers" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newUserPassword">Password</label>
+                            <input type="password" id="newUserPassword" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add User</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Editing Users -->
+    <div class="modal" id="editUserModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm">
+                        <div class="form-group">
+                            <label for="editUserId">User ID</label>
+                            <input type="text" id="editUserId" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="editUserRole">Role</label>
+                            <select id="editUserRole" class="form-control" required>
+                                <option value="student">Student</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editMaxComputers">Max Computers</label>
+                            <input type="number" id="editMaxComputers" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editUserPassword">Password (leave blank to keep the same)</label>
+                            <input type="password" id="editUserPassword" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Adding Playlists -->
+    <div class="modal" id="addPlaylistModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Playlist</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addPlaylistForm">
+                        <div class="form-group">
+                            <label for="newPlaylistTitle">Title</label>
+                            <input type="text" id="newPlaylistTitle" class="form-control" required>
+                        </div>
+                        <div id="addVideoInputsContainer"></div> <!-- Container for video inputs -->
+                        <button type="button" id="addNewVideoField" class="btn btn-secondary">Add Video</button>
+                        <button type="submit" class="btn btn-primary">Save Playlist</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Editing Playlists -->
+    <div class="modal" id="editPlaylistModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Playlist</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editPlaylistForm">
+                        <div class="form-group">
+                            <label for="editPlaylistTitle">Title</label>
+                            <input type="text" id="editPlaylistTitle" class="form-control" required>
+                        </div>
+                        <div id="editVideoInputsContainer"></div> <!-- Container for video inputs -->
+                        <button type="button" id="addEditVideoField" class="btn btn-secondary">Add Video</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Assigning Playlists to Users -->
+    <div class="modal" id="assignPlaylistModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign Playlists</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="assignedPlaylistsContainer"></div> <!-- Current playlists will be listed here -->
+                    <div class="form-group">
+                        <label for="availablePlaylists">Available Playlists</label>
+                        <select id="availablePlaylists" class="form-control"></select>
+                        <button type="button" id="assignPlaylistBtn" class="btn btn-primary mt-2">Assign Playlist</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
