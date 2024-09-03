@@ -17,7 +17,12 @@ const startServer = async () => {
 
     const app = express();
 
-    app.use(cors());
+    const corsOptions = {
+      origin: process.env.FRONTEND_URL || "http://localhost:3000",
+      credentials: true,
+    };
+
+    app.use(cors(corsOptions));
     app.use(express.json());
     app.use(cookieParser());
 
@@ -31,7 +36,7 @@ const startServer = async () => {
 
     // Start the server
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(PORT, () => console.log(`Server running on port meow${PORT}`));
   } catch (error) {
     console.error("Failed to connect to MongoDB:", error.message);
     process.exit(1); // Exit with failure code
